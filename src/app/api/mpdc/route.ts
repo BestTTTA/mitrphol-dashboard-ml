@@ -23,12 +23,12 @@ async function fetchData() {
 
     data = JSON.stringify(apiData);
   }
-
+  // await client.del(cacheKey);
   await client.quit();
   return JSON.parse(data);
 }
 
-// Export only the HTTP handler (GET in this case)
+
 export async function GET() {
   const data = await fetchData();
   return NextResponse.json(data);
