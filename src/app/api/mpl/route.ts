@@ -24,7 +24,7 @@ async function fetchData() {
     data = JSON.stringify(apiData);
   }
 
-  await client.del(cacheKey);
+  // await client.del(cacheKey); 
   await client.quit();
   return JSON.parse(data);
 }
