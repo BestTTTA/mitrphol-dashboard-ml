@@ -27,7 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
+      - name: Set up Docker Build
         uses: docker/setup-buildx-action@v2
 
       - name: Login to DockerHub
@@ -43,6 +43,11 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/fe-mitrphol-dashboard-ml:latest
+          build-args: |
+            NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+            NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+            REDIS_URL=${{ secrets.REDIS_URL }}
+
 
       - name: Deploy to Server
         if: github.ref == 'refs/heads/main'
@@ -68,9 +73,9 @@ jobs:
             docker rm fe-mitrphol-dashboard-ml && 
             docker run -d --name fe-mitrphol-dashboard-ml -p 7890:3000 \
               --restart unless-stopped \
-              -e NEXT_PUBLIC_BASE_URL=\"$NEXT_PUBLIC_BASE_URL\" \
-              -e NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=\"$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY\" \
-              -e REDIS_URL=\"$REDIS_URL\" \
+              -e NEXT_PUBLIC_BASE_URL="https://mitrphol-api-3.thetigerteamacademy.net" \
+              -e NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="AIzaSyBb8Ioejj1p4NKXJM1Fyo-xNAlztcA-1wM" \
+              -e REDIS_URL="redis://:mitrphol2024@119.59.102.60:6379" \
               $DOCKER_IMAGE
           "
 
