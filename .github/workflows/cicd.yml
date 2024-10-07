@@ -1,0 +1,77 @@
+name: Next.js CI/CD 
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/fe-mitrphol-dashboard-ml:latest
+
+      - name: Deploy to Server
+        if: github.ref == 'refs/heads/main'
+        env:
+          SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          DOCKER_IMAGE: ${{ secrets.DOCKER_USERNAME }}/fe-mitrphol-dashboard-ml:latest
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+          NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: ${{ secrets.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY }}
+          REDIS_URL: ${{ secrets.REDIS_URL }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y sshpass
+          
+          echo "DOCKER_IMAGE=$DOCKER_IMAGE"
+          echo "NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL"
+          echo "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY"
+          echo "REDIS_URL=$REDIS_URL"
+
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 $SSH_USERNAME@$SERVER_IP "
+            docker pull $DOCKER_IMAGE && 
+            docker stop fe-mitrphol-dashboard-ml && 
+            docker rm fe-mitrphol-dashboard-ml && 
+            docker run -d --name fe-mitrphol-dashboard-ml -p 7890:3000 \
+              --restart unless-stopped \
+              -e NEXT_PUBLIC_BASE_URL=\"$NEXT_PUBLIC_BASE_URL\" \
+              -e NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=\"$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY\" \
+              -e REDIS_URL=\"$REDIS_URL\" \
+              $DOCKER_IMAGE
+          "
+
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 $SSH_USERNAME@$SERVER_IP "docker image prune -f"
