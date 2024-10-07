@@ -8,11 +8,7 @@ declare global {
   }
 }
 
-function Map({
-  data,
-}: {
-  data: Prediction[];
-}) {
+function Map({ data }: { data: Prediction[] }) {
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
   });
@@ -65,8 +61,17 @@ function Map({
     initializeMap();
   }, [isLoaded, loadError, data]);
 
-  if (!isLoaded) return <div>Loading Google Maps...</div>;
-  if (loadError) return <div>Error loading Google Maps: {loadError.message}</div>;
+  if (!isLoaded) return;
+  <div className="w-full h-full p-4">
+    <div className="w-full h-full bg-sky-300 animate-pulse rounded-md flex justify-center items-center">
+      <p className="font-extrabold text-4xl text-sky-600">
+        กำลังเตรียมพร้อมข้อมูล...
+      </p>
+    </div>
+  </div>;
+  
+  if (loadError)
+    return <div>Error loading Google Maps: {loadError.message}</div>;
 
   return (
     <div className="flex w-full h-full">

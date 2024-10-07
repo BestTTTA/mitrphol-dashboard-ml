@@ -8,7 +8,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-80 h-dvh border p-4">
+    <div className="w-80 h-dvh p-4">
       <div className="w-full flex justify-center">
         <Image
           src="/mitrphol-logo-26F9A6C8DE-seeklogo.com.png"
@@ -19,9 +19,9 @@ export default function Sidebar() {
       </div>
       <ul className="flex flex-col gap-4 w-full mt-4">
         <Link
-          href="/MAC"
+          href="/zone/mac"
           className={
-            pathname === "/MAC"
+            pathname === "/zone/mac"
               ? "active w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
               : "text-sky-600 w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold hover:scale-105"
           }
@@ -29,9 +29,9 @@ export default function Sidebar() {
           MAC
         </Link>
         <Link
-          href="/SB"
+          href="/zone/sb"
           className={
-            pathname === "/SB"
+            pathname === "/zone/sb"
               ? "active w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
               : "text-sky-600 w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold hover:scale-105"
           }
@@ -39,9 +39,9 @@ export default function Sidebar() {
           SB
         </Link>
         <Link
-          href="/MPDC"
+          href="/zone/mpdc"
           className={
-            pathname === "/MPDC"
+            pathname === "/zone/mpdc"
               ? "active w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
               : "text-sky-600 w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold hover:scale-105"
           }
@@ -49,9 +49,9 @@ export default function Sidebar() {
           MPDC
         </Link>
         <Link
-          href="/MPV"
+          href="/zone/mpv"
           className={
-            pathname === "/MPV"
+            pathname === "/zone/mpv"
               ? "active w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
               : "text-sky-600 w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold hover:scale-105"
           }
@@ -59,37 +59,19 @@ export default function Sidebar() {
           MPV
         </Link>
         <Link
-          href="/MPL"
+          href="/zone/mpl"
           className={
-            pathname === "/MPL"
+            pathname === "/zone/mpl"
               ? "active w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
               : "text-sky-600 w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold hover:scale-105"
           }
         >
           MPL
         </Link>
-        <div
+        <Link
+          href="/zone/mpk"
           className={
-            pathname === "/MPK"
-              ? "active w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
-              : "text-gray-300 w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
-          }
-        >
-          MPK
-        </div>
-        <div
-          className={
-            pathname === "/MKS"
-              ? "active w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
-              : "text-gray-300 w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
-          }
-        >
-          MKS
-        </div>
-        {/* <Link
-          href="/MPK"
-          className={
-            pathname === "/MPK"
+            pathname === "/zone/mpk"
               ? "active w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
               : "text-sky-600 w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold hover:scale-105"
           }
@@ -97,15 +79,15 @@ export default function Sidebar() {
           MPK
         </Link>
         <Link
-          href="/MKS"
+          href="/zone/mks"
           className={
-            pathname === "/MKS"
+            pathname === "/zone/mks"
               ? "active w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold"
               : "text-sky-600 w-full h-20 shadow-sm drop-shadow-md flex justify-center items-center rounded-md bg-gray-100 font-bold hover:scale-105"
           }
         >
           MKS
-        </Link> */}
+        </Link>
       </ul>
     </div>
   );

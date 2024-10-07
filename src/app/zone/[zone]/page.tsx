@@ -1,33 +1,47 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Map from "@/components/Map";
+import { usePathname } from "next/navigation";
 
-function MPV() {
-  const [parsedData, setParsedData] = useState<MPVResponse | null>(null);
+function Zone() {
+  const [parsedData, setParsedData] = useState<ZoneResponse | null>(null);
   const [countEqualZero, setCountEqualZero] = useState<number>(0);
   const [countEqualOne, setCountEqualOne] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
 
+  const dataFetchedRef = useRef(false);
+  const pathname = usePathname();
+  const zone = pathname.split("/").pop();
+
   useEffect(() => {
     async function loadData() {
-      const response = await fetch("/api/mpv");
-      const data = await response.json();
-      setParsedData(data);
+      try {
+        const response = await fetch(`/api/zone?zone=${zone}`);
+        const data = await response.json();
+        setParsedData(data);
 
-      const zeroCount = data.predictions.filter(
-        (item: Prediction) => item.prediction === 0
-      ).length;
-
-      const oneCount = data.predictions.filter(
-        (item: Prediction) => item.prediction === 1
-      ).length;
-
-      setCountEqualZero(zeroCount);
-      setCountEqualOne(oneCount);
-      setTotalCount(data.predictions.length);
+        const zeroCount = data.predictions.filter(
+          (item: Prediction) => item.prediction === 0
+        ).length;
+  
+        const oneCount = data.predictions.filter(
+          (item: Prediction) => item.prediction === 1
+        ).length;
+  
+        setCountEqualZero(zeroCount);
+        setCountEqualOne(oneCount);
+        setTotalCount(data.predictions.length);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+      }
     }
-    loadData();
-  }, []);
+
+    if (!dataFetchedRef.current && zone) {
+      loadData();
+      dataFetchedRef.current = true;
+    }
+  }, [zone]);
 
   const percentageZero =
     totalCount > 0 ? ((countEqualZero / totalCount) * 100).toFixed(2) : "0";
@@ -73,13 +87,17 @@ function MPV() {
           </div>
         </div>
       ) : (
-        <p>Loading...</p>
+        <div className="w-full h-full p-4">
+          <div className="w-full h-full bg-sky-300 animate-pulse rounded-md flex justify-center items-center">
+            <p className="font-extrabold text-4xl text-sky-600">กำลังเตรียมพร้อมข้อมูล...</p>
+          </div>
+        </div>
       )}
     </main>
   );
 }
 
-export default MPV;
+export default Zone;
 
 export interface Prediction {
   lat: number;
@@ -87,7 +105,7 @@ export interface Prediction {
   prediction: number;
 }
 
-export interface MPVResponse {
+export interface ZoneResponse {
   zone: string;
   prediction_date: string;
   predictions: Prediction[];
