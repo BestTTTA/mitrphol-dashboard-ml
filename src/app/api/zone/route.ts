@@ -11,7 +11,7 @@ async function fetchData(zone: string) {
   const redisUrl = process.env.REDIS_URL;
   const client = createClient({ url: redisUrl });
   const cacheKey = `${zone}_data_ml`;
-  const fetchTimeout = 69000; 
+  const fetchTimeout = 60000; 
 
   try {
     await client.connect();
