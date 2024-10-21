@@ -23,7 +23,8 @@ async function fetchData(zone: string) {
     }
 
     const response = (await Promise.race([
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/predict/${zone}`, { cache: 'no-store' }),
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/predict/${zone}/1/5/2024/2024/6`, { cache: 'no-store' }),
+      
       timeout(fetchTimeout),
     ])) as Response;
 

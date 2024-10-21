@@ -103,6 +103,11 @@ export interface Prediction {
   lat: number;
   lon: number;
   prediction: number;
+  NDVI: number;
+  NDWI: number;
+  GLI: number;
+  Precipitation: number;
+  PlantID: string;
 }
 
 export interface ZoneResponse {
