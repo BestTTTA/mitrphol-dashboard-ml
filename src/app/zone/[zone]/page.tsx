@@ -88,8 +88,9 @@ function Zone() {
         </div>
       ) : (
         <div className="w-full h-full p-4">
-          <div className="w-full h-full bg-sky-300 animate-pulse rounded-md flex justify-center items-center">
+          <div className="flex-col w-full h-full bg-sky-300 animate-pulse rounded-md flex justify-center items-center">
             <p className="font-extrabold text-4xl text-sky-600">กำลังเตรียมพร้อมข้อมูล...</p>
+            <p className="text-sm text-gray-600">*หมายเหตุ การเตรียมพร้อมข้อมูลอาจใช้เวลามากกว่า 1 นาที</p>
           </div>
         </div>
       )}
