@@ -12,7 +12,7 @@ export default function Sidebar() {
       <div className="w-full flex justify-center">
         <Image
           src="/mitrphol-logo-26F9A6C8DE-seeklogo.com.png"
-          alt="Mitrphol Image"
+          alt="Mitrphol Images"
           height={100}
           width={100}
         />
