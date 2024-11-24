@@ -11,7 +11,7 @@ async function fetchData(zone: string) {
   const redisUrl = process.env.REDIS_URL;
   const client = createClient({ url: redisUrl });
   const cacheKey = `${zone}_data_ml`;
-  const fetchTimeout = 120000; 
+  const fetchTimeout = 200000; 
 
   try {
     await client.connect();
@@ -23,7 +23,7 @@ async function fetchData(zone: string) {
     }
 
     const response = (await Promise.race([
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/predict/${zone}/1/5/2024/2024/6`, { cache: 'no-store' }),
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/predict/model/xgboost?zone=${zone}`, { cache: 'no-store' }),
       
       timeout(fetchTimeout),
     ])) as Response;

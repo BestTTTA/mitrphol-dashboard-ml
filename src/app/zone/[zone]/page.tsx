@@ -5,8 +5,9 @@ import { usePathname } from "next/navigation";
 
 function Zone() {
   const [parsedData, setParsedData] = useState<ZoneResponse | null>(null);
-  const [countEqualZero, setCountEqualZero] = useState<number>(0);
-  const [countEqualOne, setCountEqualOne] = useState<number>(0);
+  const [countRed, setCountRed] = useState<number>(0);
+  const [countYellow, setCountYellow] = useState<number>(0);
+  const [countGreen, setCountGreen] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
 
   const dataFetchedRef = useRef(false);
@@ -20,16 +21,22 @@ function Zone() {
         const data = await response.json();
         setParsedData(data);
 
-        const zeroCount = data.predictions.filter(
-          (item: Prediction) => item.prediction === 0
+        // Categorize predictions by color
+        const redCount = data.predictions.filter(
+          (item: Prediction) => item.prediction < 10
         ).length;
-  
-        const oneCount = data.predictions.filter(
-          (item: Prediction) => item.prediction === 1
+
+        const yellowCount = data.predictions.filter(
+          (item: Prediction) => item.prediction >= 10 && item.prediction < 12
         ).length;
-  
-        setCountEqualZero(zeroCount);
-        setCountEqualOne(oneCount);
+
+        const greenCount = data.predictions.filter(
+          (item: Prediction) => item.prediction > 12
+        ).length;
+
+        setCountRed(redCount);
+        setCountYellow(yellowCount);
+        setCountGreen(greenCount);
         setTotalCount(data.predictions.length);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -43,47 +50,59 @@ function Zone() {
     }
   }, [zone]);
 
-  const percentageZero =
-    totalCount > 0 ? ((countEqualZero / totalCount) * 100).toFixed(2) : "0";
-  const percentageOne =
-    totalCount > 0 ? ((countEqualOne / totalCount) * 100).toFixed(2) : "0";
-
-  // const raiPerPrediction = 1;
-  // const areaZeroRai = countEqualZero * raiPerPrediction;
-  // const areaOneRai = countEqualOne * raiPerPrediction;
+  const percentageRed =
+    totalCount > 0 ? ((countRed / totalCount) * 100).toFixed(2) : "0";
+  const percentageYellow =
+    totalCount > 0 ? ((countYellow / totalCount) * 100).toFixed(2) : "0";
+  const percentageGreen =
+    totalCount > 0 ? ((countGreen / totalCount) * 100).toFixed(2) : "0";
 
   return (
     <main className="w-full">
       {parsedData ? (
         <div className="flex">
-          <Map data={parsedData.predictions} />
+          <Map
+            data={parsedData.predictions.map((item) => ({
+              ...item,
+              color:
+                item.prediction < 10
+                  ? "red"
+                  : item.prediction >= 10 && item.prediction < 12
+                  ? "yellow"
+                  : "green",
+            }))}
+          />
 
-          <div className="mt-4 p-2 flex flex-col items-center w-60">
+          <div className="mt-8 p-2 flex flex-col items-center w-60">
             <div className="w-full flex flex-col justify-center items-center p-2">
-              <p className="text-sky-400 font-bold">Greater than standard</p>
+              <p className="text-sky-400 font-bold text-sm">High Prediction</p>
               <p className="text-xl text-green-600 font-bold">
-                {percentageOne}%
+                {percentageGreen}%
               </p>
               <p className="text-gray-400 text-sm font-bold">
-                {countEqualOne} Plantation
+                {countGreen} Plantation
               </p>
             </div>
             <div className="bg-gray-700 h-[1px] w-[70%]"></div>
             <div className="w-full flex flex-col justify-center items-center p-2">
-              <p className="text-sky-400 font-bold">Less than standard</p>
-              <p className="text-xl text-red-600 font-bold">
-                {percentageZero}%
+              <p className="text-sky-400 font-bold text-sm">Medium Prediction (10-12)</p>
+              <p className="text-xl text-yellow-500 font-bold">
+                {percentageYellow}%
               </p>
               <p className="text-gray-400 text-sm font-bold">
-                {countEqualZero} Plantation
+                {countYellow} Plantation
               </p>
             </div>
-            {/* <p>
-              Predictions equal to 0: {countEqualZero} ({percentageZero}%) - {areaZeroRai} ไร่
-            </p>
-            <p>
-              Predictions equal to 1: {countEqualOne} ({percentageOne}%) - {areaOneRai} ไร่
-            </p> */}
+            <div className="bg-gray-700 h-[1px] w-[70%]"></div>
+            <div className="w-full flex flex-col justify-center items-center p-2">
+              <p className="text-sky-400 font-bold text-sm">Low Prediction</p>
+              <p className="text-xl text-red-600 font-bold">
+                {percentageRed}%
+              </p>
+              <p className="text-gray-400 text-sm font-bold">
+                {countRed} Plantation
+              </p>
+            </div>
           </div>
         </div>
       ) : (
@@ -103,7 +122,9 @@ export default Zone;
 export interface Prediction {
   lat: number;
   lon: number;
+  prediction_lower_bound: number;
   prediction: number;
+  prediction_upper_bound: number;
   NDVI: number;
   NDWI: number;
   GLI: number;
